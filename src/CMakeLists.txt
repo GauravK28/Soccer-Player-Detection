@@ -20,7 +20,7 @@ ci_make_library(
         SOURCES      ${SOURCE_LIST}
         INCLUDES     "${FinalProject_SOURCE_DIR}/include"
         LIBRARIES
-        BLOCKS
+        BLOCKS      Cinder-OpenCV3
 )
 
 # All users of this library will need at least C++14

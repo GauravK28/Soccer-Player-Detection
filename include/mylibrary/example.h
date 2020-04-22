@@ -5,6 +5,7 @@
 
 namespace mylibrary {
 
+void PlayVideo();
 }  // namespace mylibrary
 
 

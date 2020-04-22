@@ -86,4 +86,21 @@ if(NOT catch2_POPULATED)
     target_include_directories(catch2 INTERFACE ${catch2_SOURCE_DIR}/single_include)
 endif()
 
+
 # Add more CMake libraries here ...
+
+# Adds OpenCV library.
+FetchContent_Declare(
+        opencv
+        GIT_REPOSITORY https://github.com/opencv/opencv.git
+        GIT_TAG 4.3.0
+)
+FetchContent_GetProperties(opencv)
+if(NOT opencv_POPULATED)
+    FetchContent_Populate(opencv)
+    add_library(opencv INTERFACE)
+#    target_include_directories(opencv INTERFACE ${opencv_SOURCE_DIR}/include/opencv2)
+    target_include_directories(opencv INTERFACE ${opencv_SOURCE_DIR}modules//core//include//opencv2)
+
+endif()
+
