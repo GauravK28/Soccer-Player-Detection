@@ -22,6 +22,7 @@ class MyApp : public cinder::app::App {
   const ImVec4 press_color_ = {0.202f, 0.549f, 0.798f, 0.784f };
   ImVec4 current_color_;
   int color_count_;
+  bool should_play_video_;
 };
 
 }  // namespace myapp

@@ -5,3 +5,4 @@
     - Got OpenCV3 to work
     - Added imgui library for gui
     - Added basic gui functionality
+    - Started using opencv
