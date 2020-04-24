@@ -26,12 +26,6 @@ class MyApp : public cinder::app::App {
 
 
  private:
-  // Button functions & vars
-//  void InitializeButton(const char* button_name);
-//  const ImVec4 base_color_ = {0.492f, 0.995f, 0.765f, 0.784f };
-//  const ImVec4 press_color_ = {0.202f, 0.549f, 0.798f, 0.784f };
-//  ImVec4 current_color_;
-//  int color_count_;
   // user inputed file path
   char buf_[25]; //ImGui only supports fixed-length input strings
 

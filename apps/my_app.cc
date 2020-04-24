@@ -79,7 +79,6 @@ void MyApp::draw() {
 
 
   }
-  ImGui::PopStyleColor(color_count_); // need to get rid of colors at end of gui life
   ImGui::End();
 }
 
