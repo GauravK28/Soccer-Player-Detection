@@ -23,8 +23,7 @@ namespace myapp {
 
 using cinder::app::KeyEvent;
 
-MyApp::MyApp() : color_count_{0},
-                file_path_{""}{ }
+MyApp::MyApp() : file_path_{""}{ }
 
 void MyApp::setup() {
   ImGui::initialize();
@@ -62,6 +61,8 @@ void MyApp::draw() {
                 file_path_.rbegin(), file_path_.rend(), [](int ch) {
                     return !std::isspace(ch);
                 }).base(), file_path_.end());
+          file_path_ = base_path + file_path_;
+          cout << "the new file path" << file_path_ << endl;
       }
       ImGui::SameLine();
       string label = "(Enter video file path)";
