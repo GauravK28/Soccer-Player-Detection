@@ -38,35 +38,25 @@ void MyApp::update() {
 void MyApp::draw() {
   gl::clear(Color( 0, 0, 0 ));
   ImGui::Begin("Player Tracking"); {
-//    color_count_ = 0;
-//
-//    InitializeButton("Upload");
-//    ImGui::SameLine();
-//    //Source: https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp
-//    string label = "(Enter video file path)";
-//    //static char test[25];
-//    ImGui::InputText(label.c_str(), buf_, IM_ARRAYSIZE(buf_));
-//    ImGui::PushItemWidth(20);
-//
-//    InitializeButton("Play video");
-//    InitializeButton("create tracking video");
+    if (ImGui::Button("Upload")) {
+        string base_path = "/Users/gauravkrishnan/Downloads/"
+                 "cinder_0.9.2_mac/my-projects/"
+                 "final-project-GauravK28/assets/";
+        file_path_ = buf_;
+        // trim the string to get rid of empty characters
+        file_path_.erase(std::find_if(
+              file_path_.rbegin(), file_path_.rend(), [](int ch) {
+                  return !std::isspace(ch);
+              }).base(), file_path_.end());
+        file_path_ = base_path + file_path_;
+        cout << "the new file path" << file_path_ << endl;
+    }
 
-      if (ImGui::Button("Upload")) {
-          string base_path = "/Users/gauravkrishnan/Downloads/"
-                   "cinder_0.9.2_mac/my-projects/"
-                   "final-project-GauravK28/assets/";
-          file_path_ = buf_;
-          // trim the string to get rid of empty characters
-          file_path_.erase(std::find_if(
-                file_path_.rbegin(), file_path_.rend(), [](int ch) {
-                    return !std::isspace(ch);
-                }).base(), file_path_.end());
-          file_path_ = base_path + file_path_;
-          cout << "the new file path" << file_path_ << endl;
-      }
-      ImGui::SameLine();
-      string label = "(Enter video file path)";
-      ImGui::InputText(label.c_str(), buf_, IM_ARRAYSIZE(buf_));
+    ImGui::SameLine();
+    string label = "(Enter video file path)";
+    // TODO: Maybe allow user to open file explorer to get a file?
+    //  possible with this add on https://github.com/AirGuanZ/imgui-filebrowser
+    ImGui::InputText(label.c_str(), buf_, IM_ARRAYSIZE(buf_));
     if (ImGui::Button("Play Video")) {
       cout << "should play video?" << endl;
         if (!cap_.isOpened()) {
@@ -75,9 +65,8 @@ void MyApp::draw() {
         }
     }
     if (ImGui::Button("create tracking video")) {
-
+        // TODO
     }
-
 
   }
   ImGui::End();
@@ -110,12 +99,13 @@ void MyApp::PlayVideo() {
       break;
 
     // Display the resulting frame
-    imshow( "Frame", frame );
+    imshow( "Video Frame", frame );
 
     char c = (char)cv::waitKey(25);
-    if(c==27)
+    if(c==27) // stops playing video with ESCAPE KEY
       break;
   }
+
   // When everything done, release the video capture object
   cap_.release();
   // Closes all the frames
