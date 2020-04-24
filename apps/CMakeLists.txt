@@ -12,8 +12,8 @@ ci_make_app(
     APP_NAME    cinder-myapp
     CINDER_PATH ${CINDER_PATH}
     SOURCES     ${SOURCE_LIST}
-    LIBRARIES   mylibrary
-    BLOCKS      Cinder-OpenCV3, Cinder-ImGui
+    LIBRARIES   mylibrary opencv
+    BLOCKS      Cinder-ImGui
 )
 
 target_compile_features(cinder-myapp PRIVATE cxx_std_14)

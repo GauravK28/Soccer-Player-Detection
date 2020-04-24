@@ -17,6 +17,11 @@ project(FinalProject
         DESCRIPTION "CS 126 Final Project"
         LANGUAGES CXX)
 
+find_package(OpenCV REQUIRED) # after project()
+add_library(opencv INTERFACE)
+include_directories(${OpenCV_INCLUDE_DIRS})
+target_link_libraries(opencv INTERFACE ${OpenCV_LIBS})
+
 include(ExternalProject)
 # Optionally set things like CMAKE_CXX_STANDARD, CMAKE_POSITION_INDEPENDENT_CODE here
 
@@ -89,18 +94,4 @@ endif()
 
 # Add more CMake libraries here ...
 
-# Adds OpenCV library.
-FetchContent_Declare(
-        opencv
-        GIT_REPOSITORY https://github.com/opencv/opencv.git
-        GIT_TAG 4.3.0
-)
-FetchContent_GetProperties(opencv)
-if(NOT opencv_POPULATED)
-    FetchContent_Populate(opencv)
-    add_library(opencv INTERFACE)
-#    target_include_directories(opencv INTERFACE ${opencv_SOURCE_DIR}/include/opencv2)
-    target_include_directories(opencv INTERFACE ${opencv_SOURCE_DIR}modules//core//include//opencv2)
-
-endif()
 
