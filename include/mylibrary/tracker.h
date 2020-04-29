@@ -19,7 +19,7 @@ namespace mylibrary {
     private:
       //functions
       cv::Ptr<cv::Tracker> SelectTracker(const std::string& track_type);
-      void SetBoxColor(std::vector<cv::Scalar>& colors, const int box_num);
+
 
       //vars
       cv::Ptr<cv::Tracker> tracker_;

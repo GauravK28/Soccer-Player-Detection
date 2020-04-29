@@ -1,9 +1,10 @@
 // Copyright (c) 2020 [Your Name]. All rights reserved.
 
 #include <mylibrary/tracker.h>
+#include <mylibrary/utils.h>
+
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
-
 #include "opencv2/core.hpp"
 #include "opencv2/tracking.hpp"
 #include "cinder/Cinder.h"
@@ -81,20 +82,6 @@ void PlayerTracker::Track() {
   cv::destroyAllWindows();
 }
 
-
-/**
- * More of a utility function, could go in a seperate file
- * Used to differentiate colors based on team
- *
- * @param colors
- * @param box_num
- */
-void PlayerTracker::SetBoxColor(std::vector<cv::Scalar>& colors, const int box_num) {
-  for(int i=0; i < box_num; i++) {
-    // clang said to use emplace_back instead of push_back
-    colors.emplace_back(255, 0, 0);
-  }
-}
 
 /**
  * Types of trackers opencv has implemented
