@@ -19,4 +19,5 @@
 - **4/28/2020**
     - Implemented simple multi-object tracking
     - Need to come up with a better tracking system
-    - Or need to figure out 
+    - Or need to figure out
+    - Started working on basic obj detect w/ contours
