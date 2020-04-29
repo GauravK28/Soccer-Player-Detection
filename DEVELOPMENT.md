@@ -16,3 +16,7 @@
 - **4/26/20**
     - Brainstormed ways to track objects that go 
     out of frame
+- **4/28/2020**
+    - Implemented simple multi-object tracking
+    - Need to come up with a better tracking system
+    - Or need to figure out 
