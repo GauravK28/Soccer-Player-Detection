@@ -2,7 +2,7 @@
 
 #include "my_app.h"
 
-#include "mylibrary/example.h"
+#include "mylibrary/tracker.h"
 
 #include <cinder/app/App.h>
 #include <cinder/gl/wrapper.h>
@@ -64,17 +64,24 @@ void MyApp::draw() {
           PlayVideo();
         }
     }
-    if (ImGui::Button("create tracking video")) {
-        // TODO
+    if (ImGui::Button("Setup tracking video")) {
+      mylibrary::PlayerTracker tracker;
+
+
+      if (file_path_.empty()) {
+        VideoCapture cap(def_file_path_);
+        tracker.InitializeTracker(cap);
+
+      } else {
+        VideoCapture cap(file_path_);
+        tracker.InitializeTracker(cap);
+      }
+      tracker.LockTracker();
+      tracker.Track();
     }
 
   }
   ImGui::End();
-}
-
-
-void MyApp::keyDown(KeyEvent event) {
-
 }
 
 void MyApp::PlayVideo() {
@@ -98,18 +105,20 @@ void MyApp::PlayVideo() {
     if (frame.empty())
       break;
 
-    // Display the resulting frame
+    // Displays frame
     imshow( "Video Frame", frame );
 
-    char c = (char)cv::waitKey(25);
-    if(c==27) // stops playing video with ESCAPE KEY
+    char c = (char) cv::waitKey(25);
+    if(c==27) { // stops playing video with ESCAPE KEY
       break;
+    }
   }
 
-  // When everything done, release the video capture object
   cap_.release();
-  // Closes all the frames
   destroyAllWindows();
 }
+
+
+void MyApp::keyDown(KeyEvent event) {}
 
 }  // namespace myapp

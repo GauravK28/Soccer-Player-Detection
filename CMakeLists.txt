@@ -17,6 +17,7 @@ project(FinalProject
         DESCRIPTION "CS 126 Final Project"
         LANGUAGES CXX)
 
+# opencv
 find_package(OpenCV REQUIRED) # after project()
 add_library(opencv INTERFACE)
 include_directories(${OpenCV_INCLUDE_DIRS})

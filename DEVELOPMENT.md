@@ -12,3 +12,7 @@
 - **4/23/20**
     - Implemented basic video playing
     - Integrated imgui with opencv with cinder
+    - Can start video through imgui
+- **4/26/20**
+    - Brainstormed ways to track objects that go 
+    out of frame
