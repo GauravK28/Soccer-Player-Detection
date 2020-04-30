@@ -21,3 +21,9 @@
     - Need to come up with a better tracking system
     - Or need to figure out
     - Started working on basic obj detect w/ contours
+- **4/28/2020**
+    - Started working on object detection
+    - Got grass image mask working
+    - Started working on removing noise from image
+    - Need to create pixel color finder in gui to not hardcode
+    colors

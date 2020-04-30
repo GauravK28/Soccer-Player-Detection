@@ -6,6 +6,7 @@
 
 #include <cinder/app/App.h>
 #include <cinder/gl/wrapper.h>
+#include <mylibrary/trackertwo.h>
 
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui.hpp"
@@ -78,6 +79,12 @@ void MyApp::draw() {
       }
       tracker.LockTracker();
       tracker.Track();
+    }
+
+    if (ImGui::Button("Test image")) {
+      mylibrary::OtherTracker track;
+      VideoCapture cap(def_file_path_);
+      track.SetupTracker(cap);
     }
 
   }
