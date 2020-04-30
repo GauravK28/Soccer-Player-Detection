@@ -25,5 +25,7 @@
     - Started working on object detection
     - Got grass image mask working
     - Started working on removing noise from image
+    - Need to mess with kernal size and various noise
+     reduction methods
     - Need to create pixel color finder in gui to not hardcode
     colors

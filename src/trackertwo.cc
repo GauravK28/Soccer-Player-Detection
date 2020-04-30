@@ -29,6 +29,19 @@ namespace mylibrary {
 //
 //      }
 
+
+      //why hsv & masking:
+      // https://www.learnopencv.com/color-spaces-in-opencv-cpp-python/
+
+      //image segmentation using color spaces
+     // https://realpython.com/python-opencv-color-spaces/#visualizing-nemo-in-hsv-color-space
+
+      //basic workflow
+      // https://stackoverflow.com/questions/10948589/choosing-the-correct-upper-and-lower-hsv-boundaries-for-color-detection-withcv
+
+      //opencv morphological operations
+      // https://docs.opencv.org/3.4/d3/dbe/tutorial_opening_closing_hats.html
+
       // converts image to hsv
       cv::Mat hsv; // output image
       cvtColor(frame, hsv, CV_BGR2HSV, 0);
@@ -66,19 +79,19 @@ namespace mylibrary {
       // Defining a kernel to do morphological operation in threshold #image to get better output.
       int kMaxNoiseWidth = 12;
       int kMaxNoiseHeight = 12;
+      // TODO try diff sizes
       cv::Mat kernel = cv::Mat(cv::Size(kMaxNoiseWidth,kMaxNoiseHeight),CV_8UC1,cv::Scalar(255));
 
       cv::Mat temp;
       // Using otsu to determine threshold value automatically
       // Source: https://docs.opencv.org/3.4/d7/d4d/tutorial_py_thresholding.html
-      cv::threshold(result,temp, 127, 255, cv::THRESH_BINARY_INV + cv::THRESH_TRIANGLE);
-
+      cv::threshold(result,temp, 127, 255, cv::THRESH_BINARY_INV + cv::THRESH_OTSU);
+      // TODO try diff threshold algos
       cv::Mat output;
       // Source: https://docs.opencv.org/3.4/dbe/tutorial
       cv::morphologyEx(temp,output,cv::MORPH_CLOSE, kernel);
-//      kernel = np.ones((13,13),np.uint8)
-//      thresh = cv2.threshold(res_gray,127,255,cv2.THRESH_BINARY_INV |  cv2.THRESH_OTSU)[1]
-//      thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+      // TODO try Morph_open
+
 
       cv::resize(frame, frame, cv::Size(600,400));
       cv::imshow("Other", frame);

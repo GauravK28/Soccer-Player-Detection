@@ -87,6 +87,9 @@ void MyApp::draw() {
       track.SetupTracker(cap);
     }
 
+    // TODO: add gui option to set grass color, and both team colors
+
+
   }
   ImGui::End();
 }
