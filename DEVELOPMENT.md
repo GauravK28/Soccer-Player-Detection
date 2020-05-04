@@ -29,3 +29,9 @@
      reduction methods
     - Need to create pixel color finder in gui to not hardcode
     colors
+- **5/1/2020**
+    - Got player detection working
+    - Need to implement team seperation
+    - Need to implement ball detection
+- **5/2/2020**
+    - Worked on team detection

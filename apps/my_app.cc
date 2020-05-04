@@ -86,6 +86,11 @@ void MyApp::draw() {
       VideoCapture cap(def_file_path_);
       track.SetupTracker(cap);
     }
+    if (ImGui::Button("Testing team sep")) {
+      mylibrary::OtherTracker track;
+      VideoCapture cap(def_file_path_);
+      track.Test(cap);
+    }
 
     // TODO: add gui option to set grass color, and both team colors
 

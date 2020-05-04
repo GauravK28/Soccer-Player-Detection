@@ -14,7 +14,7 @@ namespace mylibrary {
     class OtherTracker {
     public :
         void SetupTracker(cv::VideoCapture& select_cap);
-
+        void Test(cv::VideoCapture& select_cap);
 
     private:
 

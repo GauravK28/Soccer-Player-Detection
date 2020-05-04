@@ -36,7 +36,7 @@ class MyApp : public cinder::app::App {
   // default video file path
   const std::string def_file_path_ = "/Users/gauravkrishnan/Downloads/"
                                      "cinder_0.9.2_mac/my-projects/"
-                                     "final-project-GauravK28/assets/testvid.mp4";
+                                     "final-project-GauravK28/assets/soccer.mp4";
 };
 
 }  // namespace myapp
