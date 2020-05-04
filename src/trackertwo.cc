@@ -16,18 +16,6 @@ using std::vector;
 
 namespace mylibrary {
     void OtherTracker::SetupTracker(cv::VideoCapture& select_cap) {
-      //why hsv & masking:
-      // https://www.learnopencv.com/color-spaces-in-opencv-cpp-python/
-
-      //image segmentation using color spaces
-      // https://realpython.com/python-opencv-color-spaces/#visualizing-nemo-in-hsv-color-space
-
-      //basic workflow
-      // https://stackoverflow.com/questions/10948589/choosing-the-correct-upper-and-lower-hsv-boundaries-for-color-detection-withcv
-
-      //opencv morphological operations
-      // https://docs.opencv.org/3.4/d3/dbe/tutorial_opening_closing_hats.html
-
 
       cv::VideoCapture cap = select_cap;
       cv::Mat frame;
@@ -36,14 +24,12 @@ namespace mylibrary {
         cout << "Error opening video file "  << endl;
         return;
       }
-      //cap >> frame;
 
-      while(cap.isOpened()) {       // part of vid playing
+      while(cap.isOpened()) {
         cap >> frame;
         if (frame.empty()) {
-          break;                // part of vid playing
+          break;
         }
-
 
         // converts image to hsv
         cv::Mat hsv; // output image
@@ -53,29 +39,24 @@ namespace mylibrary {
         auto lower_green = cv::Scalar(40,40,40);
         auto upper_green = cv::Scalar(70, 255, 255);
 
-
-        // Source:
-        // Define a mask ranging from lower to uppper
+        // Creating mask on grass
         cv::Mat mask_image;
         cv::inRange(hsv, lower_green, upper_green, mask_image);
-        // Do masking
         cv::Mat result;
         cv::bitwise_and(hsv, hsv, result, mask_image);
 
-
         // convert to hsv to gray
         //cv::cvtColor(result, result, cv::COLOR_HSV2BGR, 0);
-        cv::cvtColor(result, result, cv::COLOR_BGR2GRAY, 0); // comment out to show only green
+        cv::cvtColor(result, result, cv::COLOR_BGR2GRAY, 0); //comment out to show only green
 
         // Notes: https://stackoverflow.com/questions/22965277/opencv-removing-noise-from-image
         // kernel to do morph op on thresholded image.
         int kMaxNoiseWidth = 12;
         int kMaxNoiseHeight = 12;
-        // TODO try diff sizes
         cv::Mat kernel = cv::Mat(cv::Size(kMaxNoiseWidth,kMaxNoiseHeight),CV_8UC1,cv::Scalar(255));
 
-        // thresholding determines players vs non-players (thats wht i used binary)
-        // morphologyEx gets rid of noise/ sharpen player contours
+        // Thresholding: determines players vs non-players (thats wht i used binary)
+        // morphologyEx: gets rid of noise/ sharpen player contours
 
         cv::Mat temp;
         // Using otsu to determine threshold value automatically
@@ -83,31 +64,26 @@ namespace mylibrary {
         // https://stackoverflow.com/questions/17141535/how-to-use-the-otsu-threshold-in-opencv
         // thresh val is inconsequential bc OTSU determines the thresh value
         cv::threshold(result,temp, -1, 255, cv::THRESH_BINARY_INV + cv::THRESH_OTSU);
-        // TODO try diff threshold algos
         cv::Mat output;
         // Source: https://docs.opencv.org/trunk/d9/d61/tutorial_py_morphological_ops.html
         cv::morphologyEx(temp,output,cv::MORPH_CLOSE, kernel);
-        //cv::morphologyEx(output, output, cv::MORPH_OPEN, kernel);
-        // TODO try Morph_open
-
+        // Only Morph_close just to focus on contours inside grass area
 
         // Detect contours
         // Contour notes:
         // https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_table_of_contents_contours/py_table_of_contents_contours.html
         cv::Mat canny_output;
         vector<vector<cv::Point> > contours;
-        //vector<cv::Vec4i> hierarchy;
-        int thresh = 100;
-
-        /// Detect edges using canny
-        // Source: https://docs.opencv.org/2.4/doc/tutorials/imgproc/shapedescriptors/find_contours/find_contours.html
-        Canny(output, canny_output, thresh, thresh * 2, 3 );
+        int lower_thresh = 100;
+        int ratio = 2;
+        // Detect edges using canny
+        // Notes: https://docs.opencv.org/2.4/doc/tutorials/imgproc/shapedescriptors/find_contours/find_contours.html
+        Canny(output, canny_output, lower_thresh,lower_thresh * ratio,3 );
         /// Find contours
         findContours(canny_output, contours,
                 CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE,
                 cv::Point(0, 0) );
 
-        //vector<cv::Rect> bounding_rects;
         for (auto& contour: contours) {
           // bounding rect notes:
           // https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_contour_features/py_contour_features.html#contour-features
@@ -115,10 +91,13 @@ namespace mylibrary {
           if (roi.height >= roi.width && roi.height > 15 && roi.width >= 15 &&
           roi.height < 100 && roi.width < 100) {
 
-            // mask for team 1
+            // Mask for team 1
+
+            // crops frame to just the ROI
             cv::Mat team_1_hsv;
             cv::Mat temp1 = frame(roi);
-            temp1.copyTo(team_1_hsv);  // forces copy constructor instead of ref
+            temp1.copyTo(team_1_hsv); // forces copy constructor instead of ref
+                                      // so primary frame is not modified
             cv::cvtColor(team_1_hsv, team_1_hsv, CV_BGR2HSV, 0);
 
             // mask for team 1
@@ -164,14 +143,6 @@ namespace mylibrary {
           }
         }
 
-
-//      //blue range (team 1)
-//      auto lower_blue = cv::Scalar(110,50,50);
-//      auto upper_blue = cv::Scalar(130,255,255);
-//
-//      //Red range (team 2)
-//      auto lower_red = cv::Scalar(0,31,255);
-//      auto upper_red = cv::Scalar(176,255,255);
 //
 //      //white range
 //      auto lower_white = cv::Scalar(0,0,0);
@@ -182,7 +153,6 @@ namespace mylibrary {
         cv::imshow("Other", frame);
 //      cv::resize(output, output, cv::Size(600,400));
 //      cv::imshow("Video Frame", output);
-
 
 
         char c = (char) cv::waitKey(25);

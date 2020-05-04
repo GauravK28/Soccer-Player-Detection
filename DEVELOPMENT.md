@@ -35,3 +35,7 @@
     - Need to implement ball detection
 - **5/2/2020**
     - Worked on team detection
+- **5/4/2020**
+    - Basic team detection working
+    - Need to implement ball detection
+    - Maybe add ui button to select if team det. on/off
