@@ -12,18 +12,24 @@
 
 using std::cout;
 using std::endl;
+using std::string;
 using std::vector;
 
 namespace mylibrary {
     void Detector::Detect(cv::VideoCapture& select_cap, bool save_vid) {
+      should_save_ = save_vid;
 
       cap_ = select_cap;
 
       // to save detection video
-      cv::VideoWriter video("detected.mp4",
-          cv::VideoWriter::fourcc('M','P','G','4'),10,
+      string path = "/Users/gauravkrishnan/Downloads/"
+                    "cinder_0.9.2_mac/my-projects/"
+                    "final-project-GauravK28/assets/tracked/detected.mp4";
+      cv::VideoWriter video(path,
+          cv::VideoWriter::fourcc('H','2','4','6'),10,
           cv::Size(cap_.get(cv::CAP_PROP_FRAME_WIDTH),
                   cap_.get(cv::CAP_PROP_FRAME_HEIGHT)));
+      video_ = video;
 
       if (!cap_.isOpened()) {
         cout << "Error opening video file "  << endl;
@@ -36,119 +42,127 @@ namespace mylibrary {
           break;
         }
 
-        // converts image to hsv
-        cv::Mat hsv; // output image
-        cvtColor(frame_, hsv, CV_BGR2HSV, 0);
-
-        // grass color (green color range)
-        auto lower_grass = cv::Scalar(40, 40, 40);
-        auto upper_grass = cv::Scalar(70, 255, 255);
-
-        // CREATING MASK ON GRASS
-        cv::Mat mask_image;
-        cv::inRange(hsv, lower_grass, upper_grass, mask_image);
-        cv::Mat result; // result means after mask
-        cv::bitwise_and(hsv, hsv, result, mask_image);
-        // convert hsv to gray bc threshold only works on single channel images
-        //cv::cvtColor(result, result, cv::COLOR_HSV2BGR, 0); //switch to show only green
-        cv::cvtColor(result, result, cv::COLOR_BGR2GRAY, 0);
-
-        // CREATING KERNAL FOR THRESHOLD
-        // Notes: https://stackoverflow.com/questions/22965277/opencv-removing-noise-from-image
-        // kernel to do morph op on thresholded image.
-        int kMaxNoiseWidth = 10;
-        int kMaxNoiseHeight = 10;
-        cv::Mat kernel = cv::Mat(cv::Size(kMaxNoiseWidth,kMaxNoiseHeight),
-                                 CV_8UC1,cv::Scalar(255));
-
-        // INFO:
-        // Thresholding: determines players vs non-players (reason for binary down below)
-        // morphologyEx: gets rid of noise/ sharpen player contours
-
-        // CREATING THRESHOLD FOR MORPH
-        // Using otsu to determine threshold value automatically
-        // Notes: https://docs.opencv.org/3.4/d7/d4d/tutorial_py_thresholding.html
-        // https://stackoverflow.com/questions/17141535/how-to-use-the-otsu-threshold-in-opencv
-        // thresh val is inconsequential bc OTSU determines the thresh value
-        cv::Mat temp; // temp image to do thresholding
-        cv::threshold(result,temp, -1, 255, cv::THRESH_BINARY_INV + cv::THRESH_OTSU);
-        cv::Mat output;
-        // Notes: https://docs.opencv.org/trunk/d9/d61/tutorial_py_morphological_ops.html
-        cv::morphologyEx(temp,output,cv::MORPH_CLOSE, kernel);
-        // Only Morph_close just to focus on contours inside grass area
-
-        // DETECTING CONTOURS
-        // Contour notes:
-        // https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_table_of_contents_contours/py_table_of_contents_contours.html
-        cv::Mat canny_output;
-        vector<vector<cv::Point> > contours;
-        int lower_thresh = 100;
-        int ratio = 2;
-        // Detect edges using canny
-        // Notes: https://docs.opencv.org/2.4/doc/tutorials/imgproc/shapedescriptors/find_contours/find_contours.html
-        Canny(output, canny_output, lower_thresh,lower_thresh * ratio,3 );
-        // Find contours
-        findContours(canny_output, contours,
-                CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE,
-                cv::Point(0, 0) );
-
-        for (auto& contour: contours) {
-          // bounding rect notes:
-          // https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_contour_features/py_contour_features.html#contour-features
-          cv::Rect roi = cv::boundingRect(contour); // roi = region of interest
-          if (roi.height >= roi.width && roi.height > 15  && roi.width < 100) {
-            // tries to filter out non-player ROIs
-            // arbitrary values based on guess & check
-
-            // yellow range
-            auto lower_color = cv::Scalar(21, 50, 50);
-            auto upper_color = cv::Scalar(36, 255, 255);
-            int team_1_count = FindPlayer(roi, lower_color, upper_color);
-
-            // navy blue range
-            lower_color = cv::Scalar(96,0,0);
-            upper_color = cv::Scalar(114,150,150);
-            int team_2_count = FindPlayer(roi, lower_color, upper_color);
+        DetectFrame();
 
 
-            if (team_1_count > kteam1thresh && team_2_count > kteam2thresh) {
-              cv::rectangle(frame_, roi, cv::Scalar(0, 0, 255));
-            } else if (team_1_count > kteam1thresh) {
-              cv::rectangle(frame_, roi, cv::Scalar(0, 255, 255));
-            } else if (team_2_count > kteam2thresh) {
-              cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
-            }
-          }
-
-          if (roi.height >=1 && roi.width >= 1 && roi.height <= 30 && roi.width <= 30) {
-            auto lower_white = cv::Scalar(0,0,0);
-            auto upper_white = cv::Scalar(0,0,255);
-            int count = FindPlayer(roi, lower_white, upper_white);
-            if (count > 3) {
-              cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
-            }
-          }
+        char c = (char) cv::waitKey(25);
+        if(c==27) { // stops playing video with ESCAPE KEY
+          break;
         }
-
-      //FindBall();
-
-      if (save_vid) {
-        video.write(frame_);
-      } else {
-        cv::imshow("Detection", frame_);
-      }
-
-      char c = (char) cv::waitKey(25);
-      if(c==27) { // stops playing video with ESCAPE KEY
-        break;
-      }
-
       }// end of while loop
 
       cap_.release();
-      video.release();
+      video_.release();
       cv::destroyAllWindows();
     }
+
+    // seperate method to look at single frame
+    void Detector::DetectFrame() {
+      // converts image to hsv
+      cv::Mat hsv; // output image
+      cvtColor(frame_, hsv, CV_BGR2HSV, 0);
+
+      // grass color (green color range)
+      auto lower_grass = cv::Scalar(40, 40, 40);
+      auto upper_grass = cv::Scalar(70, 255, 255);
+
+      // CREATING MASK ON GRASS
+      cv::Mat mask_image;
+      cv::inRange(hsv, lower_grass, upper_grass, mask_image);
+      cv::Mat result; // result means after mask
+      cv::bitwise_and(hsv, hsv, result, mask_image);
+      // convert hsv to gray bc threshold only works on single channel images
+      //cv::cvtColor(result, result, cv::COLOR_HSV2BGR, 0); //switch to show only green
+      cv::cvtColor(result, result, cv::COLOR_BGR2GRAY, 0);
+
+      // CREATING KERNAL FOR THRESHOLD
+      // Notes: https://stackoverflow.com/questions/22965277/opencv-removing-noise-from-image
+      // kernel to do morph op on thresholded image.
+      int kMaxNoiseWidth = 10;
+      int kMaxNoiseHeight = 10;
+      cv::Mat kernel = cv::Mat(cv::Size(kMaxNoiseWidth,kMaxNoiseHeight),
+                               CV_8UC1,cv::Scalar(255));
+
+      // INFO:
+      // Thresholding: determines players vs non-players (reason for binary down below)
+      // morphologyEx: gets rid of noise/ sharpen player contours
+
+      // CREATING THRESHOLD FOR MORPH
+      // Using otsu to determine threshold value automatically
+      // Notes: https://docs.opencv.org/3.4/d7/d4d/tutorial_py_thresholding.html
+      // https://stackoverflow.com/questions/17141535/how-to-use-the-otsu-threshold-in-opencv
+      // thresh val is inconsequential bc OTSU determines the thresh value
+      cv::Mat temp; // temp image to do thresholding
+      cv::threshold(result,temp, -1, 255, cv::THRESH_BINARY_INV + cv::THRESH_OTSU);
+      cv::Mat output;
+      // Notes: https://docs.opencv.org/trunk/d9/d61/tutorial_py_morphological_ops.html
+      cv::morphologyEx(temp,output,cv::MORPH_CLOSE, kernel);
+      // Only Morph_close just to focus on contours inside grass area
+
+      // DETECTING CONTOURS
+      // Contour notes:
+      // https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_table_of_contents_contours/py_table_of_contents_contours.html
+      cv::Mat canny_output;
+      vector<vector<cv::Point> > contours;
+      int lower_thresh = 100;
+      int ratio = 2;
+      // Detect edges using canny
+      // Notes: https://docs.opencv.org/2.4/doc/tutorials/imgproc/shapedescriptors/find_contours/find_contours.html
+      Canny(output, canny_output, lower_thresh,lower_thresh * ratio,3 );
+      // Find contours
+      findContours(canny_output, contours,
+                   CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE,
+                   cv::Point(0, 0) );
+
+      for (auto& contour: contours) {
+        // bounding rect notes:
+        // https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_contour_features/py_contour_features.html#contour-features
+        cv::Rect roi = cv::boundingRect(contour); // roi = region of interest
+        if (roi.height >= roi.width && roi.height > 15  && roi.width < 100) {
+          // tries to filter out non-player ROIs
+          // arbitrary values based on guess & check
+
+          // yellow range
+          auto lower_color = cv::Scalar(21, 50, 50);
+          auto upper_color = cv::Scalar(36, 255, 255);
+          int team_1_count = FindPlayer(roi, lower_color, upper_color);
+
+          // navy blue range
+          lower_color = cv::Scalar(96,0,0);
+          upper_color = cv::Scalar(114,150,150);
+          int team_2_count = FindPlayer(roi, lower_color, upper_color);
+
+
+          if (team_1_count > kteam1thresh && team_2_count > kteam2thresh) {
+            cv::rectangle(frame_, roi, cv::Scalar(0, 0, 255));
+          } else if (team_1_count > kteam1thresh) {
+            cv::rectangle(frame_, roi, cv::Scalar(0, 255, 255));
+          } else if (team_2_count > kteam2thresh) {
+            cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
+          }
+        }
+
+        if (roi.height >=1 && roi.width >= 1 && roi.height <= 30 && roi.width <= 30) {
+          auto lower_white = cv::Scalar(0,0,0);
+          auto upper_white = cv::Scalar(0,0,255);
+          int count = FindPlayer(roi, lower_white, upper_white);
+          if (count > 3) {
+            cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
+          }
+        }
+      }
+
+      //FindBall();
+
+      if (should_save_) { // saving video
+        video_.write(frame_);
+
+      } else { // playing video
+        cv::imshow("Detection", frame_);
+      }
+
+    }
+
 
     int Detector::FindPlayer(const cv::Rect& roi,
                              const cv::Scalar& lower_color, const cv::Scalar& upper_color) {
