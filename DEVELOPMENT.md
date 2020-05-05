@@ -37,5 +37,12 @@
     - Worked on team detection
 - **5/4/2020**
     - Basic team detection working
-    - Need to implement ball detection
+    - Compartamentalized part of code
+    - Could not get ball detection to work, tried:
+        - Hough circle transformation w/ adaptive thresh, reg. thresh, 
+        & various morphs
+        - Canny edge detection w/ adaptive thresh, reg. thresh, 
+        & various morphs
     - Maybe add ui button to select if team det. on/off
+    - Create video playing/creating util file
+    

@@ -11,13 +11,19 @@
 #include "cinder/Cinder.h"
 
 namespace mylibrary {
-    class OtherTracker {
+    class Detector {
     public :
         void SetupTracker(cv::VideoCapture& select_cap);
-        void Test(cv::VideoCapture& select_cap);
-
+        int FindPlayer(const cv::Rect& roi,
+                const cv::Scalar& lower_color, const cv::Scalar& upper_color);
+        void FindBall();
     private:
+        cv::VideoCapture cap_;
+        cv::Mat frame_;
 
+        // color roi thresholds
+        int kteam1thresh = 500; // currently for yellow
+        int kteam2thresh = 70; // currently for navy blue
     };
 
 }

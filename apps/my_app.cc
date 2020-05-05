@@ -82,15 +82,15 @@ void MyApp::draw() {
     }
 
     if (ImGui::Button("Test image")) {
-      mylibrary::OtherTracker track;
+      mylibrary::Detector track;
       VideoCapture cap(def_file_path_);
       track.SetupTracker(cap);
     }
-//    if (ImGui::Button("Testing team sep")) {
-//      mylibrary::OtherTracker track;
-//      VideoCapture cap(def_file_path_);
-//      track.Test(cap);
-//    }
+    if (ImGui::Button("Testing team sep")) {
+      mylibrary::Detector track;
+      VideoCapture cap(def_file_path_);
+      track.Test(cap);
+    }
 
     // TODO: add gui option to set grass color, and both team colors
 
