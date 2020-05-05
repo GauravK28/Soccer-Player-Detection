@@ -44,7 +44,11 @@
         - Canny edge detection w/ adaptive thresh, reg. thresh, 
         & various morphs
     - Maybe add ui button to select if team det. on/off
-    - Create video playing/creating util file
+    - Need to create video playing/creating util file
 - **5/5/2020**
-    -  Refactored detection code
+    - Refactored detection code
+    - Implemented video writing
+    - Need to refactor video playing, to not repeat code
+    
+
     
