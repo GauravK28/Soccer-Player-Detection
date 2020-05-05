@@ -13,7 +13,7 @@
 namespace mylibrary {
     class Detector {
     public :
-        void SetupTracker(cv::VideoCapture& select_cap);
+        void Detect(cv::VideoCapture& select_cap, bool save_vid);
         int FindPlayer(const cv::Rect& roi,
                 const cv::Scalar& lower_color, const cv::Scalar& upper_color);
         void FindBall();

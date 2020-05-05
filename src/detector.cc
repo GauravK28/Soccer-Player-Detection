@@ -2,7 +2,7 @@
 // Created by Gaurav Krishnan on 4/28/20.
 //
 
-#include "mylibrary/trackertwo.h"
+#include "mylibrary/detector.h"
 
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
@@ -15,9 +15,15 @@ using std::endl;
 using std::vector;
 
 namespace mylibrary {
-    void Detector::SetupTracker(cv::VideoCapture& select_cap) {
+    void Detector::Detect(cv::VideoCapture& select_cap, bool save_vid) {
 
       cap_ = select_cap;
+
+      // to save detection video
+      cv::VideoWriter video("detected.mp4",
+          cv::VideoWriter::fourcc('M','P','G','4'),10,
+          cv::Size(cap_.get(cv::CAP_PROP_FRAME_WIDTH),
+                  cap_.get(cv::CAP_PROP_FRAME_HEIGHT)));
 
       if (!cap_.isOpened()) {
         cout << "Error opening video file "  << endl;
@@ -50,8 +56,8 @@ namespace mylibrary {
         // CREATING KERNAL FOR THRESHOLD
         // Notes: https://stackoverflow.com/questions/22965277/opencv-removing-noise-from-image
         // kernel to do morph op on thresholded image.
-        int kMaxNoiseWidth = 12;
-        int kMaxNoiseHeight = 12;
+        int kMaxNoiseWidth = 10;
+        int kMaxNoiseHeight = 10;
         cv::Mat kernel = cv::Mat(cv::Size(kMaxNoiseWidth,kMaxNoiseHeight),
                                  CV_8UC1,cv::Scalar(255));
 
@@ -90,9 +96,9 @@ namespace mylibrary {
           // bounding rect notes:
           // https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_contour_features/py_contour_features.html#contour-features
           cv::Rect roi = cv::boundingRect(contour); // roi = region of interest
-          if (roi.height >= roi.width && roi.height > 15 && roi.width >= 15 &&
-          roi.height < 100 && roi.width < 100) { // tries to filter out non-player ROIs
-                                                // arbitrary values based on guess & check
+          if (roi.height >= roi.width && roi.height > 15  && roi.width < 100) {
+            // tries to filter out non-player ROIs
+            // arbitrary values based on guess & check
 
             // yellow range
             auto lower_color = cv::Scalar(21, 50, 50);
@@ -124,14 +130,13 @@ namespace mylibrary {
           }
         }
 
-      //white range
-      auto lower_white = cv::Scalar(0,0,0);
-      auto upper_white = cv::Scalar(0,0,255);
-      FindBall();
+      //FindBall();
 
-
-      //cv::resize(frame, frame, cv::Size(600,400));
-      cv::imshow("Detection", frame_);
+      if (save_vid) {
+        video.write(frame_);
+      } else {
+        cv::imshow("Detection", frame_);
+      }
 
       char c = (char) cv::waitKey(25);
       if(c==27) { // stops playing video with ESCAPE KEY
@@ -141,6 +146,7 @@ namespace mylibrary {
       }// end of while loop
 
       cap_.release();
+      video.release();
       cv::destroyAllWindows();
     }
 
@@ -242,8 +248,10 @@ namespace mylibrary {
         if (roi.width > 3 && roi.width < 20 && roi.height > 3 && roi.height < 20) {
           lower_white = cv::Scalar(0,0,40);
           upper_white = cv::Scalar(179,0,225);
+//          //white range
+//          auto lower_white = cv::Scalar(0,0,0);
+//          auto upper_white = cv::Scalar(0,0,255);
           int count = FindPlayer(roi, lower_white, upper_white);
-          cout  << count << endl;
           if (count >= 1) {
 
             cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));

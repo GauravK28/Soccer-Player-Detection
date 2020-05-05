@@ -6,7 +6,7 @@
 
 #include <cinder/app/App.h>
 #include <cinder/gl/wrapper.h>
-#include <mylibrary/trackertwo.h>
+#include <mylibrary/detector.h>
 
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui.hpp"
@@ -31,6 +31,7 @@ void MyApp::setup() {
 
   cap_.set(CAP_PROP_FRAME_WIDTH, 430);
   cap_.set(CAP_PROP_FRAME_HEIGHT, 315);
+  cap_.set(CAP_PROP_FPS, 30);
 }
 
 void MyApp::update() {
@@ -59,45 +60,43 @@ void MyApp::draw() {
     //  possible with this add on https://github.com/AirGuanZ/imgui-filebrowser
     ImGui::InputText(label.c_str(), buf_, IM_ARRAYSIZE(buf_));
     if (ImGui::Button("Play Video")) {
-      cout << "should play video?" << endl;
         if (!cap_.isOpened()) {
-          cout << "We gucci?" << endl;
           PlayVideo();
         }
     }
-    if (ImGui::Button("Setup tracking video")) {
-      mylibrary::PlayerTracker tracker;
 
-
+    if (ImGui::Button("Play tracked video")) {
+      mylibrary::Detector track;
+      string file;
       if (file_path_.empty()) {
-        VideoCapture cap(def_file_path_);
-        tracker.InitializeTracker(cap);
-
+        file = def_file_path_;
       } else {
-        VideoCapture cap(file_path_);
-        tracker.InitializeTracker(cap);
+        file = file_path_;
       }
-      tracker.LockTracker();
-      tracker.Track();
+      VideoCapture cap(file);
+      track.Detect(cap, false);
+
+    }
+    if (ImGui::Button("Save tracked video")) {
+      mylibrary::Detector track;
+      string file;
+      if (file_path_.empty()) {
+        file = def_file_path_;
+      } else {
+        file = file_path_;
+      }
+      VideoCapture cap(file);
+      track.Detect(cap, true);
+
     }
 
-    if (ImGui::Button("Test image")) {
-      mylibrary::Detector track;
-      VideoCapture cap(def_file_path_);
-      track.SetupTracker(cap);
-    }
-    if (ImGui::Button("Testing team sep")) {
-      mylibrary::Detector track;
-      VideoCapture cap(def_file_path_);
-      track.Test(cap);
-    }
 
     // TODO: add gui option to set grass color, and both team colors
-
     // TODO: add ui option to select if team det. is wanted
 
 
   }
+
   ImGui::End();
 }
 
@@ -113,7 +112,6 @@ void MyApp::PlayVideo() {
     cout << "Error opening video stream or file" << endl;
     return;
   }
-  cout << "Playing video?" << endl;
   while (true) {
     Mat frame;
     // Capture frame-by-frame
