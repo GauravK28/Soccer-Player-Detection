@@ -45,4 +45,6 @@
         & various morphs
     - Maybe add ui button to select if team det. on/off
     - Create video playing/creating util file
+- **5/5/2020**
+    -  Refactored detection code
     

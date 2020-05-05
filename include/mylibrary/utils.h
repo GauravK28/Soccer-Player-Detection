@@ -11,7 +11,7 @@
 #include "cinder/Cinder.h"
 
 namespace mylibrary {
-    void SetBoxColor(std::vector<cv::Scalar>& colors, const int box_num);
+
 }
 
 #endif //FINALPROJECT_MYLIBRARY_UTILS_H

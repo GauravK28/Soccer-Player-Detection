@@ -24,7 +24,9 @@ namespace myapp {
 
 using cinder::app::KeyEvent;
 
-MyApp::MyApp() : file_path_{""}{ }
+MyApp::MyApp() : file_path_{""},
+                 is_box_checked_{false},
+                 should_split_teams_{false}{ }
 
 void MyApp::setup() {
   ImGui::initialize();
@@ -65,6 +67,14 @@ void MyApp::draw() {
         }
     }
 
+    if (ImGui::Checkbox("Seperate teams", &is_box_checked_)) {
+      if(!is_box_checked_) {
+        should_split_teams_ = false;
+      } else {
+        should_split_teams_ = true;
+      }
+    }
+
     if (ImGui::Button("Play tracked video")) {
       mylibrary::Detector track;
       string file;
@@ -74,9 +84,10 @@ void MyApp::draw() {
         file = file_path_;
       }
       VideoCapture cap(file);
-      track.Detect(cap, false);
-
+      track.Detect(cap, should_split_teams_, false);
     }
+
+
     if (ImGui::Button("Save tracked video")) {
       mylibrary::Detector track;
       string file;
@@ -86,7 +97,7 @@ void MyApp::draw() {
         file = file_path_;
       }
       VideoCapture cap(file);
-      track.Detect(cap, true);
+      track.Detect(cap, should_split_teams_, true);
 
     }
 

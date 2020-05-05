@@ -37,6 +37,9 @@ class MyApp : public cinder::app::App {
   const std::string def_file_path_ = "/Users/gauravkrishnan/Downloads/"
                                      "cinder_0.9.2_mac/my-projects/"
                                      "final-project-GauravK28/assets/soccer.mp4";
+  bool is_box_checked_;
+  bool should_split_teams_;
+
 };
 
 }  // namespace myapp

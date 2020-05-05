@@ -16,7 +16,8 @@ using std::string;
 using std::vector;
 
 namespace mylibrary {
-    void Detector::Detect(cv::VideoCapture& select_cap, bool save_vid) {
+    void Detector::Detect(cv::VideoCapture& select_cap, bool split_teams, bool save_vid) {
+      should_split_teams_ = split_teams;
       should_save_ = save_vid;
 
       cap_ = select_cap;
@@ -132,24 +133,21 @@ namespace mylibrary {
           upper_color = cv::Scalar(114,150,150);
           int team_2_count = FindPlayer(roi, lower_color, upper_color);
 
-
-          if (team_1_count > kteam1thresh && team_2_count > kteam2thresh) {
+          if (!should_split_teams_) {
+            if (team_1_count > kteam1thresh && team_2_count > kteam2thresh) { // multiple players
+              cv::rectangle(frame_, roi, cv::Scalar(0, 0, 255));
+            } else if (team_1_count > kteam1thresh || team_2_count > kteam2thresh) { // any other player
+              cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
+            }
+          } else if (team_1_count > kteam1thresh && team_2_count > kteam2thresh) { // multiple players
             cv::rectangle(frame_, roi, cv::Scalar(0, 0, 255));
-          } else if (team_1_count > kteam1thresh) {
+          } else if (team_1_count > kteam1thresh) { // differentiate team 1
             cv::rectangle(frame_, roi, cv::Scalar(0, 255, 255));
-          } else if (team_2_count > kteam2thresh) {
+          } else if (team_2_count > kteam2thresh) { // differentiate team 2
             cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
           }
         }
 
-        if (roi.height >=1 && roi.width >= 1 && roi.height <= 30 && roi.width <= 30) {
-          auto lower_white = cv::Scalar(0,0,0);
-          auto upper_white = cv::Scalar(0,0,255);
-          int count = FindPlayer(roi, lower_white, upper_white);
-          if (count > 3) {
-            cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
-          }
-        }
       }
 
       //FindBall();
@@ -160,7 +158,6 @@ namespace mylibrary {
       } else { // playing video
         cv::imshow("Detection", frame_);
       }
-
     }
 
 
@@ -187,6 +184,16 @@ namespace mylibrary {
     }
 
     void Detector::FindBall() {
+      // trying to detect ball
+//        if (roi.height >=1 && roi.width >= 1 && roi.height <= 30 && roi.width <= 30) {
+//          auto lower_white = cv::Scalar(0,0,0);
+//          auto upper_white = cv::Scalar(0,0,255);
+//          int count = FindPlayer(roi, lower_white, upper_white);
+//          if (count > 3) {
+//            cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
+//          }
+//        }
+
       cv::Mat img_gray;
       cv::cvtColor(frame_, img_gray, cv::COLOR_BGR2GRAY, 0);
 
@@ -241,9 +248,6 @@ namespace mylibrary {
 //      }
       //cv::imshow("end", frame_);
 
-
-
-
       cv::Mat canny_output;
       vector<vector<cv::Point> > contours;
       int lower_thresh = 100;
@@ -267,16 +271,12 @@ namespace mylibrary {
 //          auto upper_white = cv::Scalar(0,0,255);
           int count = FindPlayer(roi, lower_white, upper_white);
           if (count >= 1) {
-
             cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
-
           }
         }
-
       }
 
       cv::imshow("after", frame_);
     }
-
 
 }

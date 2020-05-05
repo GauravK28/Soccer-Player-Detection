@@ -13,7 +13,7 @@
 namespace mylibrary {
     class Detector {
     public :
-        void Detect(cv::VideoCapture& select_cap, bool save_vid);
+        void Detect(cv::VideoCapture& select_cap, bool split_teams, bool save_vid);
         void DetectFrame();
         int FindPlayer(const cv::Rect& roi,
                 const cv::Scalar& lower_color, const cv::Scalar& upper_color);
@@ -21,6 +21,8 @@ namespace mylibrary {
     private:
         cv::VideoCapture cap_;
         cv::Mat frame_;
+
+        bool should_split_teams_;
 
         cv::VideoWriter video_;
         bool should_save_;
