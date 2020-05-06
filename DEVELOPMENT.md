@@ -48,7 +48,7 @@
 - **5/5/2020**
     - Refactored detection code
     - Implemented video writing
-    - Need to refactor video playing, to not repeat code
+    - Added ReadME and cleaned up code
     
 
     
