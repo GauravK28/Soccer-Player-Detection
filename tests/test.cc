@@ -26,3 +26,20 @@ TEST_CASE("Correct number of player boxes", "[player-detection]") {
 
   REQUIRE(detect.GetBoxCounts() > players_in_view * .6);
 }
+
+TEST_CASE("Team sepeartion", "[team]") {
+  mylibrary::Detector detect;
+  string file = "/Users/gauravkrishnan/Downloads/"
+                "cinder_0.9.2_mac/my-projects/"
+                "final-project-GauravK28/assets/soccer.mp4";
+
+  cv::VideoCapture cap(file);
+  cv::Mat first_frame;
+  cap >> first_frame;
+  detect.SetFrame(first_frame);
+  detect.SetShouldSplitTeams(true);
+  detect.DetectFrame();
+
+  REQUIRE(detect.GetTeam1Count() >= 4);
+  REQUIRE(detect.GetTeam2Count() >= 3);
+}

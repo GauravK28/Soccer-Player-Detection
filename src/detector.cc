@@ -71,6 +71,9 @@ namespace mylibrary {
     // seperate method to look at single frame
     void Detector::DetectFrame() {
       box_counts_ = 0;
+      team_1_cnt_ = 0;
+      team_2_cnt_ = 0;
+
       // converts image to hsv
       cv::Mat hsv; // output image
       cvtColor(frame_, hsv, CV_BGR2HSV, 0);
@@ -136,34 +139,36 @@ namespace mylibrary {
         // arbitrary values based on guess & check
         if (roi.height >= roi.width && roi.height > 15  && roi.width < 100) {
 
-
           // yellow range
           auto lower_color = cv::Scalar(21, 50, 50);
           auto upper_color = cv::Scalar(36, 255, 255);
-          int team_1_count = FindPlayer(roi, lower_color, upper_color);
+          int team_1_presence = FindPlayer(roi, lower_color, upper_color);
 
           // navy blue range
           lower_color = cv::Scalar(96,0,0);
           upper_color = cv::Scalar(114,150,150);
-          int team_2_count = FindPlayer(roi, lower_color, upper_color);
+          int team_2_presence = FindPlayer(roi, lower_color, upper_color);
 
-          if (!should_split_teams_) {
-            if (team_1_count > kteam1thresh && team_2_count > kteam2thresh) { // multiple players
+          if (!should_split_teams_) { // no team seperation
+            if (team_1_presence > kteam1thresh && team_2_presence > kteam2thresh) { // multiple players
               cv::rectangle(frame_, roi, cv::Scalar(0, 0, 255));
               box_counts_++;
-            } else if (team_1_count > kteam1thresh || team_2_count > kteam2thresh) { // any other player
+            } else if (team_1_presence > kteam1thresh || team_2_presence > kteam2thresh) { // any other player
               cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
               box_counts_++;
             }
-          } else if (team_1_count > kteam1thresh && team_2_count > kteam2thresh) { // multiple players
+
+          } else if (team_1_presence > kteam1thresh && team_2_presence > kteam2thresh) { // multiple players
             cv::rectangle(frame_, roi, cv::Scalar(0, 0, 255));
             box_counts_++;
-          } else if (team_1_count > kteam1thresh) { // differentiate team 1
+          } else if (team_1_presence > kteam1thresh) { // differentiate team 1
             cv::rectangle(frame_, roi, cv::Scalar(0, 255, 255));
             box_counts_++;
-          } else if (team_2_count > kteam2thresh) { // differentiate team 2
+            team_1_cnt_++;
+          } else if (team_2_presence > kteam2thresh) { // differentiate team 2
             cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
             box_counts_++;
+            team_2_cnt_++;
           }
         }
 
@@ -204,6 +209,13 @@ namespace mylibrary {
 
     int Detector::GetBoxCounts() {
       return box_counts_;
+    }
+
+    int Detector::GetTeam1Count() {
+      return team_1_cnt_;
+    }
+    int Detector::GetTeam2Count() {
+      return team_2_cnt_;
     }
 
     void Detector::SetFrame(const cv::Mat& frame) {

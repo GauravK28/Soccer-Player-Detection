@@ -18,6 +18,8 @@ namespace mylibrary {
         int FindPlayer(const cv::Rect& roi,
                        const cv::Scalar& lower_color, const cv::Scalar& upper_color);
         int GetBoxCounts();
+        int GetTeam1Count();
+        int GetTeam2Count();
         void SetFrame(const cv::Mat& frame);
         void SetShouldSplitTeams(bool set_team);
 
@@ -32,10 +34,13 @@ namespace mylibrary {
         bool should_save_;
 
         // color roi thresholds
-        const int kteam1thresh = 500; // currently for yellow
-        const int kteam2thresh = 70; // currently for navy blue
+        const int kteam1thresh = 500; // currently set for yellow
+        const int kteam2thresh = 70; // currently set for navy blue
 
+        // for testing
         int box_counts_;
+        int team_1_cnt_;
+        int team_2_cnt_;
     };
 
 }
