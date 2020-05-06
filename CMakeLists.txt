@@ -18,7 +18,7 @@ project(FinalProject
         LANGUAGES CXX)
 
 # opencv
-find_package(OpenCV REQUIRED) # after project()
+find_package(OpenCV REQUIRED)
 add_library(opencv INTERFACE)
 include_directories(${OpenCV_INCLUDE_DIRS})
 target_link_libraries(opencv INTERFACE ${OpenCV_LIBS})
