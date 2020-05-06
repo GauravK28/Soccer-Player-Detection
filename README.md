@@ -8,6 +8,12 @@ layout.
 
 **Author**: Gaurav Krishnan - [`gauravk2@illinois.edu`](mailto:example@illinois.edu)
 
+
+![Player Detection](/snapshots/detection-snapshot.png)
+
+![GUI Snapshot](/snapshots/gui-snapshot.png)
+
+
 ### Project Goal
 At first this was meant to be a tracking project, but shifted 
 to detection because tracking was too clunky and not accurate enough. So now the
