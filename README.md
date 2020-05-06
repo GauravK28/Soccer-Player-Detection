@@ -1,4 +1,4 @@
-# Soccer Player Tracking
+# Soccer Player Detection
 
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![docs](https://img.shields.io/badge/docs-yes-brightgreen)](docs/README.md)
