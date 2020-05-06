@@ -18,7 +18,7 @@ const int kHeight = 300;
 
 void SetUp(App::Settings* settings) {
   settings->setWindowSize(kWidth, kHeight);
-  settings->setTitle("Soccer Player Tracking");
+  settings->setTitle("Soccer Player Detection");
 }
 
 }  // namespace myapp

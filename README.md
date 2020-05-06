@@ -47,6 +47,8 @@ that make it easier for the opencv `findContours()` function to detect the playe
 - Can play the clip
 - Can detect players on the field
 - Can toggle on/off team seperation in the detection
+    - With team seperation, it detects if several players are in one bounding box
+    and marks it differently
 - Can download the detected video
 
 ### Notes
