@@ -16,31 +16,31 @@ namespace myapp {
  * Unable to use cinder's gui display because opencv library is not Cinder-OpenCV3
  * it is the normal OpenCV library because the cinder version would not properly link
  */
-class MyApp : public cinder::app::App {
- public:
-  MyApp();
-  void setup() override;
-  void update() override;
-  void draw() override;
-  void keyDown(cinder::app::KeyEvent) override;
+    class MyApp : public cinder::app::App {
+    public:
+        MyApp();
+        void setup() override;
+        void update() override;
+        void draw() override;
+        void keyDown(cinder::app::KeyEvent) override;
 
 
- private:
-  // user inputed file path
-  char buf_[25]; //ImGui only supports fixed-length input strings
+    private:
+        // user inputed file path
+        char buf_[25] = ""; //ImGui only supports fixed-length input strings
 
-  // video playing
-  cv::VideoCapture cap_;
-  void PlayVideo();
-  std::string file_path_; // user specified video's path
-  // default video file path
-  const std::string def_file_path_ = "/Users/gauravkrishnan/Downloads/"
-                                     "cinder_0.9.2_mac/my-projects/"
-                                     "final-project-GauravK28/assets/soccer.mp4";
-  bool is_box_checked_;
-  bool should_split_teams_;
+        // video playing
+        cv::VideoCapture cap_;
+        void PlayVideo();
+        std::string file_path_; // user specified video's path
+        // default video file path
+        const std::string def_file_path_ = "/Users/gauravkrishnan/Downloads/"
+                                           "cinder_0.9.2_mac/my-projects/"
+                                           "final-project-GauravK28/assets/soccer.mp4";
+        bool is_box_checked_;
+        bool should_split_teams_;
 
-};
+    };
 
 }  // namespace myapp
 

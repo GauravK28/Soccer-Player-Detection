@@ -16,7 +16,7 @@ namespace mylibrary {
         void Detect(cv::VideoCapture& select_cap, bool split_teams, bool save_vid);
         void DetectFrame();
         int FindPlayer(const cv::Rect& roi,
-                const cv::Scalar& lower_color, const cv::Scalar& upper_color);
+                       const cv::Scalar& lower_color, const cv::Scalar& upper_color);
         void FindBall();
     private:
         cv::VideoCapture cap_;

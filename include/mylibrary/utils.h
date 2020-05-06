@@ -11,7 +11,7 @@
 #include "cinder/Cinder.h"
 
 namespace mylibrary {
-
+    std::string GetTimeStamp();
 }
 
 #endif //FINALPROJECT_MYLIBRARY_UTILS_H

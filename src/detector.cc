@@ -1,3 +1,4 @@
+
 //
 // Created by Gaurav Krishnan on 4/28/20.
 //
@@ -6,6 +7,7 @@
 
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
+#include <mylibrary/utils.h>
 #include "opencv2/core.hpp"
 #include "opencv2/tracking.hpp"
 #include "cinder/Cinder.h"
@@ -15,22 +17,29 @@ using std::endl;
 using std::string;
 using std::vector;
 
+
 namespace mylibrary {
     void Detector::Detect(cv::VideoCapture& select_cap, bool split_teams, bool save_vid) {
       should_split_teams_ = split_teams;
       should_save_ = save_vid;
 
       cap_ = select_cap;
+      cap_.set(cv::CAP_PROP_FPS, 30);
 
       // to save detection video
       string path = "/Users/gauravkrishnan/Downloads/"
                     "cinder_0.9.2_mac/my-projects/"
-                    "final-project-GauravK28/assets/tracked/detected.mp4";
-      cv::VideoWriter video(path,
-          cv::VideoWriter::fourcc('H','2','4','6'),10,
-          cv::Size(cap_.get(cv::CAP_PROP_FRAME_WIDTH),
-                  cap_.get(cv::CAP_PROP_FRAME_HEIGHT)));
-      video_ = video;
+                    "final-project-GauravK28/assets/tracked/detected";
+      string time_stamp = mylibrary::GetTimeStamp();
+      path = path + time_stamp + ".avi";
+
+      if (should_save_) {
+        cv::VideoWriter video(path,
+                              cv::VideoWriter::fourcc('M','J','P','G'),20,
+                              cv::Size(cap_.get(cv::CAP_PROP_FRAME_WIDTH),
+                                       cap_.get(cv::CAP_PROP_FRAME_HEIGHT)));
+        video_ = video;
+      }
 
       if (!cap_.isOpened()) {
         cout << "Error opening video file "  << endl;
@@ -53,7 +62,10 @@ namespace mylibrary {
       }// end of while loop
 
       cap_.release();
-      video_.release();
+      if (should_save_) {
+        video_.release();
+      }
+
       cv::destroyAllWindows();
     }
 
@@ -184,16 +196,6 @@ namespace mylibrary {
     }
 
     void Detector::FindBall() {
-      // trying to detect ball
-//        if (roi.height >=1 && roi.width >= 1 && roi.height <= 30 && roi.width <= 30) {
-//          auto lower_white = cv::Scalar(0,0,0);
-//          auto upper_white = cv::Scalar(0,0,255);
-//          int count = FindPlayer(roi, lower_white, upper_white);
-//          if (count > 3) {
-//            cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
-//          }
-//        }
-
       cv::Mat img_gray;
       cv::cvtColor(frame_, img_gray, cv::COLOR_BGR2GRAY, 0);
 
@@ -216,7 +218,7 @@ namespace mylibrary {
                                CV_8UC1,cv::Scalar(255));
       cv::Mat morphed;
       cv::adaptiveThreshold(img_gray, morphed, 255,
-              cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY,5,15);
+                            cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY,5,15);
       //cv::threshold(img_gray,morphed, 100, 255, cv::THRESH_BINARY);
 //      cv::morphologyEx(img_gray, morphed,cv::MORPH_ERODE, kernel, cv::Point(-1,-1), 2);
 //      cv::morphologyEx(morphed, morphed,cv::MORPH_DILATE, kernel, cv::Point(-1,-1), 3);
