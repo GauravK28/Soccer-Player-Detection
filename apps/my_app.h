@@ -31,7 +31,6 @@ namespace myapp {
 
         // video playing
         cv::VideoCapture cap_;
-        void PlayVideo();
         std::string file_path_; // user specified video's path
         // default video file path
         const std::string def_file_path_ = "/Users/gauravkrishnan/Downloads/"

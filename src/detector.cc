@@ -54,7 +54,6 @@ namespace mylibrary {
 
         DetectFrame();
 
-
         char c = (char) cv::waitKey(25);
         if(c==27) { // stops playing video with ESCAPE KEY
           break;
@@ -86,7 +85,6 @@ namespace mylibrary {
       cv::Mat result; // result means after mask
       cv::bitwise_and(hsv, hsv, result, mask_image);
       // convert hsv to gray bc threshold only works on single channel images
-      //cv::cvtColor(result, result, cv::COLOR_HSV2BGR, 0); //switch to show only green
       cv::cvtColor(result, result, cv::COLOR_BGR2GRAY, 0);
 
       // CREATING KERNAL FOR THRESHOLD
@@ -102,12 +100,13 @@ namespace mylibrary {
       // morphologyEx: gets rid of noise/ sharpen player contours
 
       // CREATING THRESHOLD FOR MORPH
-      // Using otsu to determine threshold value automatically
       // Notes: https://docs.opencv.org/3.4/d7/d4d/tutorial_py_thresholding.html
       // https://stackoverflow.com/questions/17141535/how-to-use-the-otsu-threshold-in-opencv
+      // Using otsu to determine threshold value automatically
       // thresh val is inconsequential bc OTSU determines the thresh value
       cv::Mat temp; // temp image to do thresholding
-      cv::threshold(result,temp, -1, 255, cv::THRESH_BINARY_INV + cv::THRESH_OTSU);
+      cv::threshold(result,temp, -1, 255,
+              cv::THRESH_BINARY_INV + cv::THRESH_OTSU);
       cv::Mat output;
       // Notes: https://docs.opencv.org/trunk/d9/d61/tutorial_py_morphological_ops.html
       cv::morphologyEx(temp,output,cv::MORPH_CLOSE, kernel);
@@ -132,9 +131,11 @@ namespace mylibrary {
         // bounding rect notes:
         // https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_contour_features/py_contour_features.html#contour-features
         cv::Rect roi = cv::boundingRect(contour); // roi = region of interest
+
+        // tries to filter out non-player ROIs
+        // arbitrary values based on guess & check
         if (roi.height >= roi.width && roi.height > 15  && roi.width < 100) {
-          // tries to filter out non-player ROIs
-          // arbitrary values based on guess & check
+
 
           // yellow range
           auto lower_color = cv::Scalar(21, 50, 50);

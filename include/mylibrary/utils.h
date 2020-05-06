@@ -12,6 +12,8 @@
 
 namespace mylibrary {
     std::string GetTimeStamp();
+
+    void PlayVideo(cv::VideoCapture& cap);
 }
 
 #endif //FINALPROJECT_MYLIBRARY_UTILS_H

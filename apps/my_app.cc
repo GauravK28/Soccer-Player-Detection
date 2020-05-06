@@ -5,6 +5,7 @@
 #include <cinder/app/App.h>
 #include <cinder/gl/wrapper.h>
 #include <mylibrary/detector.h>
+#include <mylibrary/utils.h>
 
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui.hpp"
@@ -64,7 +65,18 @@ namespace myapp {
         ImGui::InputText(label.c_str(), buf_, IM_ARRAYSIZE(buf_));
         if (ImGui::Button("Play Video")) {
           if (!cap_.isOpened()) {
-            PlayVideo();
+
+            if (!file_path_.empty()) {
+              cap_.open(file_path_);
+              cout << "file path empty?" << endl;
+            } else {
+              cap_.open(def_file_path_);
+            }
+
+            mylibrary::PlayVideo(cap_);
+
+
+            //PlayVideo();
           }
         }
 
@@ -98,48 +110,13 @@ namespace myapp {
 
         }
 
-
         // TODO: add gui option to set grass color, and both team colors
         // TODO: add ui option to select if team det. is wanted
-
-
       }
 
       ImGui::End();
     }
 
-    void MyApp::PlayVideo() {
-      // Source: https://www.learnopencv.com/read-write-and-display-a-video-using-opencv-cpp-python/
-      if (!file_path_.empty()) {
-        cap_.open(file_path_);
-        cout << "file path empty?" << endl;
-      } else {
-        cap_.open(def_file_path_);
-      }
-      if(!cap_.isOpened()){
-        cout << "Error opening video stream or file" << endl;
-        return;
-      }
-      while (true) {
-        Mat frame;
-        // Capture frame-by-frame
-        cap_ >> frame;
-        // If the frame is empty, break immediately
-        if (frame.empty())
-          break;
-
-        // Displays frame
-        imshow( "Video Frame", frame );
-
-        char c = (char) cv::waitKey(25);
-        if(c==27) { // stops playing video with ESCAPE KEY
-          break;
-        }
-      }
-
-      cap_.release();
-      destroyAllWindows();
-    }
 
 
     void MyApp::keyDown(KeyEvent event) {}

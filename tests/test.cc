@@ -9,11 +9,6 @@
 
 using std::string;
 
-TEST_CASE("Random sanity test", "[random]") {
-  const float random = cinder::randFloat();
-  REQUIRE(0. <= random);
-  REQUIRE(random <= 1.);
-}
 
 TEST_CASE("Correct number of player boxes", "[player-detection]") {
   mylibrary::Detector detect;
