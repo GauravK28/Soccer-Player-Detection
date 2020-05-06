@@ -71,6 +71,7 @@ namespace mylibrary {
 
     // seperate method to look at single frame
     void Detector::DetectFrame() {
+      box_counts_ = 0;
       // converts image to hsv
       cv::Mat hsv; // output image
       cvtColor(frame_, hsv, CV_BGR2HSV, 0);
@@ -148,15 +149,20 @@ namespace mylibrary {
           if (!should_split_teams_) {
             if (team_1_count > kteam1thresh && team_2_count > kteam2thresh) { // multiple players
               cv::rectangle(frame_, roi, cv::Scalar(0, 0, 255));
+              box_counts_++;
             } else if (team_1_count > kteam1thresh || team_2_count > kteam2thresh) { // any other player
               cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
+              box_counts_++;
             }
           } else if (team_1_count > kteam1thresh && team_2_count > kteam2thresh) { // multiple players
             cv::rectangle(frame_, roi, cv::Scalar(0, 0, 255));
+            box_counts_++;
           } else if (team_1_count > kteam1thresh) { // differentiate team 1
             cv::rectangle(frame_, roi, cv::Scalar(0, 255, 255));
+            box_counts_++;
           } else if (team_2_count > kteam2thresh) { // differentiate team 2
             cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
+            box_counts_++;
           }
         }
 
@@ -194,6 +200,22 @@ namespace mylibrary {
       int team_count = cv::countNonZero(team);
       return team_count;
     }
+
+    int Detector::GetBoxCounts() {
+      return box_counts_;
+    }
+
+    void Detector::SetFrame(const cv::Mat& frame) {
+      frame_ = frame;
+    }
+
+    void Detector::SetShouldSplitTeams(bool set_team) {
+      should_split_teams_ = set_team;
+    }
+
+
+
+
 
     void Detector::FindBall() {
       cv::Mat img_gray;

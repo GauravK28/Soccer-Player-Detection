@@ -17,6 +17,10 @@ namespace mylibrary {
         void DetectFrame();
         int FindPlayer(const cv::Rect& roi,
                        const cv::Scalar& lower_color, const cv::Scalar& upper_color);
+        int GetBoxCounts();
+        void SetFrame(const cv::Mat& frame);
+        void SetShouldSplitTeams(bool set_team);
+
         void FindBall();
     private:
         cv::VideoCapture cap_;
@@ -28,8 +32,10 @@ namespace mylibrary {
         bool should_save_;
 
         // color roi thresholds
-        int kteam1thresh = 500; // currently for yellow
-        int kteam2thresh = 70; // currently for navy blue
+        const int kteam1thresh = 500; // currently for yellow
+        const int kteam2thresh = 70; // currently for navy blue
+
+        int box_counts_;
     };
 
 }
