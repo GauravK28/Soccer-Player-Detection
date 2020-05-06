@@ -22,7 +22,13 @@ rectangles to mark their approximate locations. The detection primarily works by
 contours in each frame. Each frame of the video goes through several manipulations and transformations
 that make it easier for the opencv `findContours()` function to detect the players. 
 
-### Dependencies
+### Quick start
+Project should be compatible with Mac/Windows/Linux as
+OpenCV and ImGUI are compatible with all three.
+Only potential problem could occur when saving the detected video as the video encoding is system specific
+ but opencv should be able to handle that.
+
+#### Dependencies
 - [OpenCV](https://github.com/opencv/opencv/tree/4.3.0) 
     - To get opencv working with cinder follow this [guide](https://blog.zhajor.com/2016/10/install-opencv-and-make-a-test-project-with-clion/)
     - To add the project to cmake you may need to add this snippet under the project sections in the cmake file
@@ -57,9 +63,9 @@ that make it easier for the opencv `findContours()` function to detect the playe
     and marks it differently
 - Can download the detected video
 
-### Notes
+### Important Notes
 - To exit out of a video just press the escape key
-- Uploading files are based frmo the assets directory and only handles
+- Uploading files are based from the assets directory (which is git-ignored) and only handles
 file names that are 24 characters or less (limitation because of ImGui 
 but can be increased if needed)
 
