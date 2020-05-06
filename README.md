@@ -3,15 +3,15 @@
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![docs](https://img.shields.io/badge/docs-yes-brightgreen)](docs/README.md)
 
-Read [this document](https://cliutils.gitlab.io/modern-cmake/chapters/basics/structure.html) to understand the project
-layout.
-
-**Author**: Gaurav Krishnan - [`gauravk2@illinois.edu`](mailto:example@illinois.edu)
-
-
 ![Player Detection](/snapshots/detection-snapshot.png)
 
 ![GUI Snapshot](/snapshots/gui-snapshot.png)
+
+**Author**: Gaurav Krishnan - [`gauravk2@illinois.edu`](mailto:example@illinois.edu)
+
+Read [this document](https://cliutils.gitlab.io/modern-cmake/chapters/basics/structure.html) to understand the project
+layout.
+
 
 
 ### Project Goal
