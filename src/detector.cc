@@ -238,10 +238,10 @@ namespace mylibrary {
       auto upper_white = cv::Scalar(255,255,195);
 
 //      // CREATING MASK ON GRASS
-//      cv::Mat mask_image;
-//      cv::inRange(img_gray, lower_white, upper_white, mask_image);
-//      cv::Mat result; // result means after mask
-//      cv::bitwise_and(img_gray, img_gray, result, mask_image);
+      cv::Mat mask_image;
+      cv::inRange(img_gray, lower_white, upper_white, mask_image);
+      cv::Mat result; // result means after mask
+      cv::bitwise_and(img_gray, img_gray, result, mask_image);
 
       medianBlur(img_gray, img_gray, 5);
 
@@ -254,36 +254,36 @@ namespace mylibrary {
       cv::Mat morphed;
       cv::adaptiveThreshold(img_gray, morphed, 255,
                             cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY,5,15);
-      //cv::threshold(img_gray,morphed, 100, 255, cv::THRESH_BINARY);
-//      cv::morphologyEx(img_gray, morphed,cv::MORPH_ERODE, kernel, cv::Point(-1,-1), 2);
-//      cv::morphologyEx(morphed, morphed,cv::MORPH_DILATE, kernel, cv::Point(-1,-1), 3);
-//      cv::morphologyEx(morphed, morphed,cv::MORPH_OPEN, kernel,cv::Point(-1,-1), 1);
+      cv::threshold(img_gray,morphed, 100, 255, cv::THRESH_BINARY);
+      cv::morphologyEx(img_gray, morphed,cv::MORPH_ERODE, kernel, cv::Point(-1,-1), 2);
+      cv::morphologyEx(morphed, morphed,cv::MORPH_DILATE, kernel, cv::Point(-1,-1), 3);
+      cv::morphologyEx(morphed, morphed,cv::MORPH_OPEN, kernel,cv::Point(-1,-1), 1);
 
       cv::imshow("between", morphed);
-      //cv::morphologyEx(morphed, morphed,cv::MORPH_CLOSE, kernel, cv::Point(-1,-1), 1);
+      cv::morphologyEx(morphed, morphed,cv::MORPH_CLOSE, kernel, cv::Point(-1,-1), 1);
 
       // reduces false circles 9x9 is kernal size recommended by
       // https://docs.opencv.org/2.4/modules/imgproc/doc/feature_detection.html?highlight=houghcircles
-      //GaussianBlur(img_gray, img_gray, cv::Size(5, 5), 2, 2);
+      GaussianBlur(img_gray, img_gray, cv::Size(5, 5), 2, 2);
 
-      //medianBlur(img_gray, img_gray, 5);
+      medianBlur(img_gray, img_gray, 5);
       // Find circles
-//      vector<cv::Vec3f> circles;
-//      HoughCircles(img_gray, circles, CV_HOUGH_GRADIENT,
-//                   2, img_gray.rows / 4, 200, 100, 1, 15 );
-//      for (auto& circle : circles) {
-//
-//        cv::Point center(cvRound(circle[0]), cvRound(circle[1]));
-//        cout << center.x << " " << center.y << endl;
-//        int radius = cvRound(circle[2]);
-//        // draw the circle center
-//        cv::circle( frame_, center, 3,
-//                cv::Scalar(0,255,0), -1, 8, 0 );
-//        // draw the circle outline
-//        cv::circle( frame_, center, radius,
-//                cv::Scalar(0,0,255), 3, 8, 0 );
-//      }
-      //cv::imshow("end", frame_);
+      vector<cv::Vec3f> circles;
+      HoughCircles(img_gray, circles, CV_HOUGH_GRADIENT,
+                   2, img_gray.rows / 4, 200, 100, 1, 15 );
+      for (auto& circle : circles) {
+
+        cv::Point center(cvRound(circle[0]), cvRound(circle[1]));
+        cout << center.x << " " << center.y << endl;
+        int radius = cvRound(circle[2]);
+        // draw the circle center
+        cv::circle( frame_, center, 3,
+                cv::Scalar(0,255,0), -1, 8, 0 );
+        // draw the circle outline
+        cv::circle( frame_, center, radius,
+                cv::Scalar(0,0,255), 3, 8, 0 );
+      }
+      cv::imshow("end", frame_);
 
       cv::Mat canny_output;
       vector<vector<cv::Point> > contours;
@@ -297,15 +297,15 @@ namespace mylibrary {
                    CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE,
                    cv::Point(0, 0) );
 
-      //cv::imshow("before", frame_);
+      cv::imshow("before", frame_);
       for (auto& contour: contours) {
         cv::Rect roi = cv::boundingRect(contour);
         if (roi.width > 3 && roi.width < 20 && roi.height > 3 && roi.height < 20) {
           lower_white = cv::Scalar(0,0,40);
           upper_white = cv::Scalar(179,0,225);
 //          //white range
-//          auto lower_white = cv::Scalar(0,0,0);
-//          auto upper_white = cv::Scalar(0,0,255);
+          auto lower_white = cv::Scalar(0,0,0);
+          auto upper_white = cv::Scalar(0,0,255);
           int count = FindPlayer(roi, lower_white, upper_white);
           if (count >= 1) {
             cv::rectangle(frame_, roi, cv::Scalar(255, 0, 0));
